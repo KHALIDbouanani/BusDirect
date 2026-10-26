@@ -172,4 +172,26 @@ btnModifier.addEventListener("click", function () {
     nouveauNom.value = "";
 });
 
+// ------------->suppression<-------------
+
+btnSupprimer.addEventListener("click", function() {
+    if (passagerSupprimer.value === "") {
+        return;
+    }
+    const numero = Number(passagerSupprimer.value);
+    let supprime = false;
+    for (let i = 0; i < reservations.length; i++) {
+        if (reservations[i].numero === numero) {
+            reservations.splice(i, 1);
+            supprime = true;
+            break;
+        }
+    }
+    if (supprime === false) {
+        return;
+    }
+    actualisation_page();
+    nouveauNom.value = "";
+});
+
 actualisation_page()
