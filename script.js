@@ -128,4 +128,48 @@ btnConfirmer.addEventListener("click", function () {
     inputNom.value = "";
 });
 
+// ----------------->Modification<----------------
+
+function Formulaire_de_Modifier() {
+    if (passagerModifier.value === "") {
+        nouveauNom.value = "";
+        return;
+    }
+    const reservation = search(Number(passagerModifier.value));
+    if (reservation !== null) {
+        nouveauNom.value = reservation.nom;
+    }
+}
+passagerModifier.addEventListener("change", Formulaire_de_Modifier)
+btnModifier.addEventListener("click", function () {
+    if (passagerModifier.value === "") {
+        return;
+    }
+    const ancienNumero = Number(passagerModifier.value);
+    const reservation = search(ancienNumero);
+    const nom = nouveauNom.value.trim();
+
+    if (reservation === null) {
+        return;
+    }
+    if (nom === "") {
+        return;
+    }
+    if (nom_exist(nom, ancienNumero)) {
+        return;
+    }
+
+    let nouveauNumero = ancienNumero;
+    if (siegeModifier.value !== "") {
+        nouveauNumero = Number(siegeModifier.value);
+        if (nouveauNumero !== ancienNumero && search(nouveauNumero) !== null) {
+            return;
+        }
+    }
+    reservation.nom = nom;
+    reservation.numero = nouveauNumero;
+    actualisation_page();
+    nouveauNom.value = "";
+});
+
 actualisation_page()
