@@ -110,8 +110,9 @@ const messageSupprimer = document.getElementById("messageSupprimer")
 
 const prixPlace = 80
 const nombreSieges = 20
-const reservations = [];
+let reservations = [];
 
+storage()
 // ------------------>Reservation<---------------
 
 btnConfirmer.addEventListener("click", function () {
@@ -136,6 +137,7 @@ btnConfirmer.addEventListener("click", function () {
     }
     Notification (messageReserver,"Réservation complète avec succès",true)
     reservations.push({ numero: numero, nom: nom });
+    sauvegarder()
     actualisation_page();
     inputNom.value = "";
 });
@@ -178,6 +180,7 @@ btnModifier.addEventListener("click", function () {
     Notification (messageModifier,"Modification complète avec succès",true)
     reservation.nom = nom;
     reservation.numero = nouveauNumero;
+    sauvegarder()
     actualisation_page();
     nouveauNom.value = "";
 });
@@ -196,10 +199,18 @@ btnSupprimer.addEventListener("click", function() {
             break;
         }
     }
-    
+    sauvegarder()
     Notification(messageSupprimer,"Suppression complète avec succès",true)
     actualisation_page();
-    nouveauNom.value = "";
+    nouveauNom.value = ""; 
 });
-
+function storage(){
+    const KEY = localStorage.getItem("reservations");
+    if(KEY!==null){
+        reservations = JSON.parse(KEY);
+    }
+}
+function sauvegarder() {
+    localStorage.setItem("reservations",JSON.stringify(reservations));
+}
 actualisation_page()
