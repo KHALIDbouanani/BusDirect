@@ -12,7 +12,7 @@ function siege_automatique() {
             return num;
         }
     }
-    return 0;
+    return "full";
 }
 function nom_exist(nom, num_to_skip) {
     for (let i = 0; i < reservations.length; i++) {
@@ -68,7 +68,7 @@ function options_a_choisir() {
         option(siegeReserver, num, "Siège " + num);
         option(siegeModifier, num, "Siège " + num);
         }
-    }
+    } 
     for (let i = 0; i < reservations.length; i++) {
     const texte = reservations[i].nom + " (siège " + reservations[i].numero + ")";
         option(passagerModifier, reservations[i].numero, texte);
@@ -79,7 +79,15 @@ function Bus_info() {
     disponibles.textContent = nombreSieges - reservations.length;
     recette.textContent = reservations.length * prixPlace;
 }
-
+function Notification (section,message,check){
+    section.textContent = message;
+    if(check){
+        section.className = "rounded px-3 py-2 text-sm bg-green-100 text-green-800 border border-green-400";
+    }else{
+        section.className = "rounded px-3 py-2 text-sm bg-red-100 text-red-800 border border-red-400";
+    }
+    setTimeout(function(){section.className = ("hidden")},3000);
+}
 
 
 const disponibles = document.getElementById("disponibles")
@@ -95,7 +103,10 @@ const nouveauNom = document.getElementById("nouveauNom")
 const siegeModifier = document.getElementById("siegeModifier")
 const btnModifier = document.getElementById("btnModifier")
 const messageModifier = document.getElementById("messageModifier")
-
+// -----------------Suppression--------------------- 
+const passagerSupprimer = document.getElementById("passagerSupprimer")
+const btnSupprimer = document.getElementById("btnSupprimer")
+const messageSupprimer = document.getElementById("messageSupprimer")
 
 const prixPlace = 80
 const nombreSieges = 20
@@ -107,22 +118,23 @@ btnConfirmer.addEventListener("click", function () {
     let numero;
     const nom = inputNom.value.trim();
     if (nom === "") {
+        Notification (messageReserver,"Entrer un nom",false)
         return;
     }
     if (nom_exist(nom, 0)) {
+        Notification (messageReserver,"Le nom existe déja",false)
         return;
     }
     if (siegeReserver.value === "") {
         numero = siege_automatique();
-        if (numero === 0) {
+        if (numero === "full") {
+            Notification (messageReserver,"!!LES PLACES SONT PLEINES!!",false)
             return;
         }
     } else {
         numero = Number(siegeReserver.value);
-        if (search(numero) !== null) {
-            return;
-        }
     }
+    Notification (messageReserver,"Réservation complète avec succès",true)
     reservations.push({ numero: numero, nom: nom });
     actualisation_page();
     inputNom.value = "";
@@ -143,29 +155,27 @@ function Formulaire_de_Modifier() {
 passagerModifier.addEventListener("change", Formulaire_de_Modifier)
 btnModifier.addEventListener("click", function () {
     if (passagerModifier.value === "") {
+        Notification (messageModifier,"Choisir un passager",false)
         return;
     }
     const ancienNumero = Number(passagerModifier.value);
     const reservation = search(ancienNumero);
     const nom = nouveauNom.value.trim();
 
-    if (reservation === null) {
-        return;
-    }
     if (nom === "") {
+        Notification (messageModifier,"Le nom est obligatoire",false)
         return;
     }
     if (nom_exist(nom, ancienNumero)) {
+        Notification (messageModifier,"Le nom existe déja",false)
         return;
     }
 
     let nouveauNumero = ancienNumero;
     if (siegeModifier.value !== "") {
         nouveauNumero = Number(siegeModifier.value);
-        if (nouveauNumero !== ancienNumero && search(nouveauNumero) !== null) {
-            return;
-        }
     }
+    Notification (messageModifier,"Modification complète avec succès",true)
     reservation.nom = nom;
     reservation.numero = nouveauNumero;
     actualisation_page();
@@ -176,20 +186,18 @@ btnModifier.addEventListener("click", function () {
 
 btnSupprimer.addEventListener("click", function() {
     if (passagerSupprimer.value === "") {
+        Notification(messageSupprimer,"Choisir un passager",false)
         return;
     }
     const numero = Number(passagerSupprimer.value);
-    let supprime = false;
     for (let i = 0; i < reservations.length; i++) {
         if (reservations[i].numero === numero) {
             reservations.splice(i, 1);
-            supprime = true;
             break;
         }
     }
-    if (supprime === false) {
-        return;
-    }
+    
+    Notification(messageSupprimer,"Suppression complète avec succès",true)
     actualisation_page();
     nouveauNom.value = "";
 });
